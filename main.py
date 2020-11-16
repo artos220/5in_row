@@ -17,7 +17,7 @@ def iteration(player: Player):
 
     while True:
         x, y = input('input coordinates x y:').strip().split()
-        status = game.move(player.player_id, int(x), int(y))
+        status = game.move(player, int(x), int(y))
         if status == 'WIN':
             print(player.name + ' WIN!')
             return False
