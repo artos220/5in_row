@@ -1,83 +1,37 @@
 import numpy as np
+import itertools
 
 
-def update_row(row, x):
+def has5in_row(row):
     """
-    проходит по строке и увеличивает значение соседних ячеек для x на 1, если в них уже есть 1
-    :param row: строка с элементами
-    :param x: номер элемента
+    :param row: current matrix line, need 5 in row
     """
-    # соседи слева
-    while x >= 0:
-        if row[x] > 0:
-            row[x] += 1
-            x -= 1
-        break
-    # соседи справа
-    while x < len(row):
-        if row[x+1] > 0:
-            row[x+1] += 1
-            x += 1
-        break
-    return row
+    # TODO declare groups as array
+    groups = []
+    for k, g in itertools.groupby(row):
+        groups.append(sum(list(g)))
+    if (np.array(groups).max()) >= 5:
+        return True
 
 
 class Player:
-    def __init__(self, name: str, player_id: int):
+    def __init__(self, name: str, player_id: int, size: int):
         self.name: str = name
         self.player_id: int = player_id
-        # все ходы игрока
-        self.field: np.array = None
+        self.field: np.array = np.zeros((size, size), dtype=int)  # player field
+        self.size = size  # filed size
 
-        # матрицы со счетом игрока, если в строке будет 5, то победа
-        self.field_rows: np.array = None
-        self.field_columns: np.array = None
-        self.field_left: np.array = None
-        self.field_right: np.array = None
-
-    def field_update(self, x: int, y: int):
+    def has_won(self, y: int, x: int):
         """
-        обновление счета игрока
-        увеличивает соседние ячейки для x,y на 1, если в них уже есть 1
-        и так для строк/колонок/дигоналей
-        :param x: columns
-        :param y: rows
+        update the player's field and check his score
+        :param x: column
+        :param y: row
         """
-        self.field[x][y] = 1
-        size = len(self.field)
+        self.field[y][x] = 1
 
-        # rows
-        self.field_rows[x][y] = 1
-        self.field_rows[y] = update_row(self.field_rows[y], x)
-
-        # columns
-        self.field_columns[x][y] = 1
-        self.field_columns[x] = update_row(np.fliplr(self.field_columns[x]), y)
-
-        # ldiagonal
-        # rdiagonal
-
-    def has_5in_row(self):
-        target = 2
-
-        x = (np.sum(self.field, axis=0))
-        for i in x:
-            if (np.sum(i)) >= target:
-                return True
-
-        y = (np.sum(self.field, axis=1))
-        for i in y:
-            if (np.sum(i)) >= target:
-                return True
-
-        for i in range(self.field.size):
-            # diagonal sum
-            if (np.sum(self.field.diagonal(offset=i, axis1=0, axis2=1))) >= target:
-                return True
-            if (np.sum(self.field.diagonal(offset=i + 1, axis1=1, axis2=0))) >= target:
-                return True
-            # fliplr diagonal sum
-            if (np.sum(np.fliplr(self.field).diagonal(offset=i, axis1=0, axis2=1))) >= target:
-                return True
-            if (np.sum(np.fliplr(self.field).diagonal(offset=i + 1, axis1=1, axis2=0))) >= target:
-                return True
+        # check player score for x,y coordinates in row, column, diagonal, anti-diagonal
+        if has5in_row(self.field[y].copy()) \
+                or has5in_row(np.transpose(self.field[:, x].copy())) \
+                or has5in_row(self.field.diagonal(offset=x-y).copy()) \
+                or has5in_row(np.fliplr(self.field).diagonal(offset=self.size-1-x-y).copy()):
+            return True
