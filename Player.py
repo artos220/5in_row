@@ -18,8 +18,12 @@ class Player:
     def __init__(self, name: str, player_id: int, size: int):
         self.name: str = name
         self.player_id: int = player_id
-        self.field: np.array = np.zeros((size, size), dtype=int)  # player field
         self.size = size  # filed size
+        self.ZERO_ARRAY_: np.array = np.zeros((size, size), dtype=int)
+        self.field: np.array = self.ZERO_ARRAY_.copy()  # player field
+
+    def clear(self):
+        self.field = self.ZERO_ARRAY_.copy()
 
     def has_won(self, y: int, x: int):
         """
