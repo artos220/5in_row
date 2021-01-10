@@ -13,6 +13,9 @@ class Board:
     def player_field_get(self, player_id: int) -> np.array:
         return np.where(self.field == player_id, self.field, self.ZERO_ARRAY_.copy()).copy() // player_id
 
+    def clear(self):
+        self.field: np.array = self.ZERO_ARRAY_.copy()
+
     def show(self):
         print('--')
         for i in self.field:
