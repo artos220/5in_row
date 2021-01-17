@@ -5,7 +5,7 @@ from Board import Board
 from Player import Player
 
 
-size = 15  # int(input('set field:'))  # board size
+size = 10  # int(input('set field:'))  # board size
 board = Board(size=size)
 
 player1 = Player(player_id=1, name='Player1', size=size)
