@@ -8,8 +8,8 @@ from Player import Player
 size = 15  # int(input('set field:'))  # board size
 board = Board(size=size)
 
-player1 = Player(player_id=1, name='Bob', size=size)
-player2 = Player(player_id=2, name='Sara', size=size)
+player1 = Player(player_id=1, name='Player1', size=size)
+player2 = Player(player_id=2, name='Player2', size=size)
 game = Game(board, [player1, player2])
 # game.start()
 
@@ -24,13 +24,17 @@ def index():
 
     elif request.method == 'POST' and not game.game_over:
         r = request.form.to_dict()
-        lst = [list(r)[0], r[list(r)[0]]]
-        game.make_iteration(game.current_player, lst[0].split()[1], lst[0].split()[0])
+        coordinates = [list(r)[0], r[list(r)[0]]]
+        x = coordinates[0].split()[1]
+        y = coordinates[0].split()[0]
+        game.make_iteration(game.current_player, x, y)
 
-    return render_template('index.html',
-                           board=board.field,
-                           player=game.current_player.player_id,
-                           game_over=game.game_over)
+    params = {'board': board.field,
+              'player': game.current_player.player_id,
+              'game_over': game.game_over,
+              }
+
+    return render_template('index.html', **params)
 
 
 if __name__ == '__main__':
